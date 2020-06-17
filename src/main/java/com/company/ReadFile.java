@@ -1,26 +1,27 @@
 package com.company;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class ReadFile {
 
-    static String s;
-    static StringTokenizer st ;
-    public static void read() throws IOException {
+    public static List<String[]> dataArray = new ArrayList();
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("src/main/resources/source-data.tsv"));
-        s = bufferedReader.readLine();
-        while (s != null){
-            List<String> dataArray = new ArrayList<String>();
-            String[] data = s.split("\t");
-            for (String item:data) {
-                System.out.print(item + "  ");
-            }
-            System.out.println(); // Print the data line.
-            s = bufferedReader.readLine(); // Read next line of data.
+    public void read() throws IOException {
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/resources/source-data.tsv"), "utf16"));
+        while (bufferedReader.ready()) {
+            dataArray.add(bufferedReader.readLine().split("\t"));
+        }
+        GenerateReport generateReport = new GenerateReport();
+        for (String[] item : dataArray) {
+            System.out.print(item[0] + "  ");
+            System.out.print(item[1] + "  ");
+            System.out.print(item[2] + "  \n");
         }
 
     }

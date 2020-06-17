@@ -9,15 +9,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 
-public class xmlParse {
+public class XmlParse {
     Columns columns;
     Page page;
 
-    public xmlParse() throws ParserConfigurationException, IOException, SAXException {
+    public XmlParse() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new File("src/main/resources/settings.xml"));
-
         page = new Page(doc);
         columns = new Columns(doc);
     }
