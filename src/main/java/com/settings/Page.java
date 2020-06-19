@@ -1,4 +1,4 @@
-package com.company;
+package com.settings;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,7 +16,6 @@ public class Page {
     public String getHeight() {
         return height;
     }
-
 
     public Page(Document doc) {
         NodeList page = doc.getElementsByTagName("page");

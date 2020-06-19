@@ -1,5 +1,7 @@
-package com.company;
+package com.readData;
 
+import com.settings.Columns;
+import com.settings.Page;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -10,14 +12,22 @@ import java.io.File;
 import java.io.IOException;
 
 public class XmlParse {
-    Columns columns;
+    Columns column;
     Page page;
+
+    public Columns getColumn() {
+        return column;
+    }
+
+    public Page getPage() {
+        return page;
+    }
 
     public XmlParse() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new File("src/main/resources/settings.xml"));
         page = new Page(doc);
-        columns = new Columns(doc);
+        column = new Columns(doc);
     }
 }
