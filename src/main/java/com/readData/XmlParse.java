@@ -19,10 +19,6 @@ public class XmlParse {
         return column;
     }
 
-    public Page getPage() {
-        return page;
-    }
-
     public XmlParse() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();

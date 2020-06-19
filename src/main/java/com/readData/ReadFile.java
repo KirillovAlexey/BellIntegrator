@@ -1,7 +1,5 @@
 package com.readData;
 
-import com.settings.Columns;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;

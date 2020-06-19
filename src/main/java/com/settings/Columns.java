@@ -9,18 +9,13 @@ import java.util.HashMap;
 
 public class Columns {
 
-    private HashMap<String, String> listColumn = new HashMap<>();
+    private final HashMap<String, String> listColumn = new HashMap<>();
 
-    public  HashMap<String, String> getColumns() {
+    public HashMap<String, String> getColumns() {
         return listColumn;
     }
-/*
-    public HashMap<String, String> getListColumn() {
-        return listColumn;
-    }*/
 
     public Columns(Document doc) {
-        //super(doc);
         NodeList data = doc.getElementsByTagName("column");
         for (int i = 0; i < data.getLength(); i++) {
             Node node = data.item(i);

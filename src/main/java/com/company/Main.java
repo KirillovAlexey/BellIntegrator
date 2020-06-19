@@ -10,10 +10,12 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        XmlParse xmlParse = new XmlParse();
-        ReadFile readFile = new ReadFile();
-        GenerateReport generateReport = new GenerateReport(readFile, xmlParse);
+        XmlParse xmlParse = new XmlParse();//читаем файл с настройками таблицы
+        ReadFile readFile = new ReadFile();//читаем файл с исходными данными
         readFile.read();
+        GenerateReport generateReport = new GenerateReport(readFile, xmlParse);
         generateReport.generate();
     }
 }
+
+//java Generator.class settings.xml source-data.tsv example-report.txt
