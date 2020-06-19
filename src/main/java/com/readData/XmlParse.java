@@ -15,14 +15,27 @@ public class XmlParse {
     private Columns column;
     private Page page;
 
+    public Page getPage() {
+        return page;
+    }
+
     public Columns getColumn() {
         return column;
+    }
+    public XmlParse(String string) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(new File("src\\main\\resources\\" + string));
+
+        page = new Page(doc);
+        column = new Columns(doc);
     }
 
     public XmlParse() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File("src/main/resources/settings.xml"));
+        Document doc = db.parse(new File("src\\main\\resources\\settings.xml"));
+
         page = new Page(doc);
         column = new Columns(doc);
     }

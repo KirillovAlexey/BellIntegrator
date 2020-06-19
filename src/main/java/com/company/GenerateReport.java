@@ -2,7 +2,9 @@ package com.company;
 
 import com.readData.ReadFile;
 import com.readData.XmlParse;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -10,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 class GenerateReport {
     private ReadFile readFile;
+    private XmlParse xmlParse;
     private OutputStreamWriter outputStreamWriter;
     private int countRow = 0;//счетчик строк
     private final int lNum;//длина Номера
@@ -17,16 +20,16 @@ class GenerateReport {
     private final int lFio;//длина ФИО
 
 
-    private static final String PATH = "src/main/resources/result.tsv";
+    private static final String PATH = "src\\main\\resources\\";
     private static final String SEPARATOR_COLUMN = "|";
     private static final String SEPARATOR_LINE = "-";
     private final StringBuilder number = new StringBuilder("Номер");
     private final StringBuilder dates = new StringBuilder("Дата");
     private final StringBuilder fio = new StringBuilder("ФИО");
 
-    public GenerateReport(ReadFile read, XmlParse xmlParse) {
+    public GenerateReport(ReadFile read) throws IOException, SAXException, ParserConfigurationException {
         this.readFile = read;
-
+        xmlParse = new XmlParse();
         lNum = Integer.parseInt(xmlParse.getColumn().getColumns().get("Номер"));
         lDate = Integer.parseInt(xmlParse.getColumn().getColumns().get("Дата"));
         lFio = Integer.parseInt(xmlParse.getColumn().getColumns().get("ФИО"));
@@ -37,8 +40,8 @@ class GenerateReport {
     }
 
 
-    public void generate() throws IOException {
-        outputStreamWriter = new OutputStreamWriter(new FileOutputStream(PATH), StandardCharsets.UTF_16);
+    public void generate(String param) throws IOException {
+        outputStreamWriter = new OutputStreamWriter(new FileOutputStream(PATH + param), StandardCharsets.UTF_16);
         readFile = new ReadFile();
         createCap(number.toString(), dates.toString(), fio.toString());
         generateReport();
@@ -107,12 +110,11 @@ class GenerateReport {
                 countRow++;
             }
 
-            outputStreamWriter.write(new String(new char[32]).replace("\0", SEPARATOR_LINE));
+            outputStreamWriter.write(new String(new char[Integer.parseInt(xmlParse.getPage().getWidth())])
+                    .replace("\0", SEPARATOR_LINE) + "\n");
             countRow++;
-            outputStreamWriter.write("\n");
             countRow++;
             outputStreamWriter.flush();
-
             //Вставка символа разделения страниц, печать заголовка - "~"
             if (countRow % 12 == 0) {
                 outputStreamWriter.write("~\n");
@@ -126,7 +128,16 @@ class GenerateReport {
         outputStreamWriter.write(SEPARATOR_COLUMN + " " + num + " " + SEPARATOR_COLUMN);
         outputStreamWriter.write(" " + date + " " + SEPARATOR_COLUMN);
         outputStreamWriter.write(" " + fio + " " + SEPARATOR_COLUMN + "\n");
-        outputStreamWriter.write(new String(new char[32]).replace("\0", SEPARATOR_LINE) + "\n");
+        outputStreamWriter.write(new String(new char[Integer.parseInt(xmlParse.getPage().getWidth())])
+                .replace("\0", SEPARATOR_LINE) + "\n");
         outputStreamWriter.flush();
+    }
+
+    public void logicalStringColumn(){
+
+    }
+    //Подвал
+    public void footer(){
+
     }
 }
