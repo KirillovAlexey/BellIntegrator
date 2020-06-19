@@ -2,127 +2,129 @@ package com.company;
 
 import com.readData.ReadFile;
 import com.readData.XmlParse;
+import com.settings.Columns;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
-public class GenerateReport {
-    ReadFile readFile;
+class GenerateReport {
+    private ReadFile readFile;
     XmlParse xmlParse;
-    int countRow=0;
+    private int countRow=0;
+    private int lNum;
+    private int lDate;
+    private int lFio;
 
 
-    static String delimetrColumn = "|";
-    static String delimetrString = "-";
-    StringBuilder number = new StringBuilder("Номер"); //numberSB.setLength(8);
-    StringBuilder dates = new StringBuilder("Дата"); //dateSB.setLength(7);
-    StringBuilder fio = new StringBuilder("ФИО"); //fioSB.setLength(7);
+    private static final String PATH = "src/main/resources/result.tsv";
+    private static final String SEPARATOR_COLUMN = "|";
+    private static final String SEPARATOR_LINE = "-";
+    private final StringBuilder number = new StringBuilder("Номер");
+    private final StringBuilder dates = new StringBuilder("Дата");
+    private final StringBuilder fio = new StringBuilder("ФИО");
 
-    OutputStreamWriter outputStreamWriter;
+    private OutputStreamWriter outputStreamWriter;
 
-    public GenerateReport(ReadFile read, XmlParse xmlParse) {
+    public GenerateReport(ReadFile read, XmlParse xmlParse) throws IOException, SAXException, ParserConfigurationException {
         this.readFile = read;
-        this.xmlParse = xmlParse;
+        this.xmlParse = new XmlParse();
+
+        lNum = Integer.parseInt(xmlParse.getColumn().getColumns().get("Номер"));
+        lDate = Integer.parseInt(xmlParse.getColumn().getColumns().get("Дата"));
+        lFio = Integer.parseInt(xmlParse.getColumn().getColumns().get("ФИО"));
+
         number.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("Номер")));
         dates.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("Дата")));
         fio.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("ФИО")));
     }
 
+    //
     public void generate() throws IOException {
-        outputStreamWriter = new OutputStreamWriter(new FileOutputStream("src/main/resources/result.tsv"), "utf16");
+        outputStreamWriter = new OutputStreamWriter(new FileOutputStream(PATH), StandardCharsets.UTF_16);
         readFile = new ReadFile();
-        inputString(outputStreamWriter, number.toString(), dates.toString(), fio.toString());
+        createCap(number.toString(), dates.toString(), fio.toString());
         generateReport();
-
     }
 
-    public void inputString(OutputStreamWriter outputStreamWriter, String num, String date, String fio) throws IOException {
-        createHead(num,date,fio);
-        outputStreamWriter.write(new String(new char[32]).replace("\0", delimetrString) + "\n");
-        countRow++;
-        //outputStreamWriter.write(new String(new char[32]).replace("\0", delimetrString) + "\n");
-        countRow++;
-        outputStreamWriter.flush();
-    }
-
-    public void generateReport() throws IOException {
+    private void generateReport() throws IOException {
         for (String[] str : readFile.getDataArray()) {
             String tempNum;
             String tempData;
             String tempFio;
 
             do {
-                if (str[0].length() > 8) {
-                    tempNum = str[0].substring(0, 8);
+                if (str[0].length() > lNum) {
+                    tempNum = str[0].substring(0, lNum);
                     tempNum = String.format(" %-8s ", tempNum);
-                    str[0] = str[0].substring(8);
-                    outputStreamWriter.write(delimetrColumn + tempNum);
+                    str[0] = str[0].substring(lNum);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempNum);
                 }
-                else if(str[0].length()<=8){
+                else if(str[0].length()<=lNum){
                     tempNum = String.format(" %-8s ", str[0]);
-                    outputStreamWriter.write(delimetrColumn + tempNum);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempNum);
                     str[0]="";
-                    tempNum = str[0];
                 }
-                if (str[1].length() > 7) {
-                    tempData = str[1].substring(0, 7);
+                if (str[1].length() > lDate) {
+                    tempData = str[1].substring(0, lDate);
                     tempData = String.format(" %-7s ", tempData);
-                    str[1] = str[1].substring(7);
-                    outputStreamWriter.write(delimetrColumn + tempData);
+                    str[1] = str[1].substring(lDate);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempData);
                 }
-                else if(str[1].length()<=7){
+                else if(str[1].length()<=lDate){
                     tempData = String.format(" %-7s ", str[1]);
-                    outputStreamWriter.write(delimetrColumn + tempData);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempData);
                     str[1] = "";
-                    tempData = str[1];
 
                 }
-                if (str[2].length() > 7) {
+                if (str[2].length() > lFio) {
                     str[2] = str[2].trim();
-                    tempFio = str[2].substring(0, 7);
+                    tempFio = str[2].substring(0, lFio);
                     tempFio = String.format(" %-7s ", tempFio);
-                    str[2] = str[2].substring(7);
-                    outputStreamWriter.write(delimetrColumn + tempFio + delimetrColumn);
+                    str[2] = str[2].substring(lFio);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempFio + SEPARATOR_COLUMN);
                 }
-                else if(str[2].length()<=7){
+                else if(str[2].length()<=lFio){
                     tempFio = String.format(" %-7s ", str[2]);
-                    outputStreamWriter.write(delimetrColumn + tempFio + delimetrColumn);
+                    outputStreamWriter.write(SEPARATOR_COLUMN + tempFio + SEPARATOR_COLUMN);
                     str[2]="";
-                    tempFio=str[2];
                 }
                 outputStreamWriter.write("\n");
                 outputStreamWriter.flush();
                 countRow++;
                 if(countRow%12==0){
                     outputStreamWriter.write("~\n");
-                    createHead(number.toString(),dates.toString(),fio.toString());
+                    createCap(number.toString(),dates.toString(),fio.toString());
                 }
-            } while (str[0].length() >= 8 || str[1].length() >= 7 || str[2].length() >= 7);
+            } while (str[0].length() >= lNum || str[1].length() >= lDate || str[2].length() >= lFio);
             str[2] = str[2].trim();
             if(str[0].length()!=0 || str[1].length()!=0 || str[2].length()!=0) {
-                outputStreamWriter.write(delimetrColumn + String.format(" %-8s ", str[0])
-                        + delimetrColumn + String.format(" %-7s ", str[1])
-                        + delimetrColumn + String.format(" %-7s ", str[2]) + delimetrColumn + "\n");
+                outputStreamWriter.write(SEPARATOR_COLUMN + String.format(" %-8s ", str[0])
+                        + SEPARATOR_COLUMN + String.format(" %-7s ", str[1])
+                        + SEPARATOR_COLUMN + String.format(" %-7s ", str[2]) + SEPARATOR_COLUMN + "\n");
                 countRow++;
             }
-            outputStreamWriter.write(new String(new char[32]).replace("\0", delimetrString));
+            outputStreamWriter.write(new String(new char[32]).replace("\0", SEPARATOR_LINE));
             countRow++;
             outputStreamWriter.write("\n");
             countRow++;
             outputStreamWriter.flush();
             if(countRow%12==0){
                 outputStreamWriter.write("~\n");
-                createHead(number.toString(),dates.toString(),fio.toString());
+                createCap(number.toString(),dates.toString(),fio.toString());
             }
         }
     }
 
-    public void createHead(String num,String date,String fio) throws IOException {
-        outputStreamWriter.write(delimetrColumn + " " + num + " " + delimetrColumn);
-        outputStreamWriter.write(" " + date + " " + delimetrColumn);
-        outputStreamWriter.write(" " + fio + " " + delimetrColumn + "\n");
-        //outputStreamWriter.write(new String(new char[32]).replace("\0", delimetrString) + "\n");
+    // Создание заголовка
+    private void createCap(String num, String date, String fio) throws IOException {
+        outputStreamWriter.write(SEPARATOR_COLUMN + " " + num + " " + SEPARATOR_COLUMN);
+        outputStreamWriter.write(" " + date + " " + SEPARATOR_COLUMN);
+        outputStreamWriter.write(" " + fio + " " + SEPARATOR_COLUMN + "\n");
+        outputStreamWriter.write(new String(new char[32]).replace("\0", SEPARATOR_LINE)+"\n");
         outputStreamWriter.flush();
     }
 }

@@ -6,8 +6,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Page {
-    private String width;
-    private String height;
+    private final String width;
+    private final String height;
 
     public String getWidth() {
         return width;

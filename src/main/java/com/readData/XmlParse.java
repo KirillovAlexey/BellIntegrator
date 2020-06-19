@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class XmlParse {
-    Columns column;
-    Page page;
+    private Columns column;
+    private Page page;
 
     public Columns getColumn() {
         return column;

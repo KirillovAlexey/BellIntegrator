@@ -7,13 +7,17 @@ import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 
-public class Columns /*extends Page*/ {
+public class Columns {
 
     private HashMap<String, String> listColumn = new HashMap<>();
 
-    public HashMap<String, String> getColumns() {
+    public  HashMap<String, String> getColumns() {
         return listColumn;
     }
+/*
+    public HashMap<String, String> getListColumn() {
+        return listColumn;
+    }*/
 
     public Columns(Document doc) {
         //super(doc);
