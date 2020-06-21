@@ -31,12 +31,12 @@ public class XmlParse {
         column = new Columns(doc);
     }
 
-    public XmlParse() throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(new File("src\\main\\resources\\settings.xml"));
-
-        page = new Page(doc);
-        column = new Columns(doc);
-    }
+//    public XmlParse() throws ParserConfigurationException, IOException, SAXException {
+//        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//        DocumentBuilder db = dbf.newDocumentBuilder();
+//        Document doc = db.parse(new File("src\\main\\resources\\settings.xml"));
+//
+//        page = new Page(doc);
+//        column = new Columns(doc);
+//    }
 }
