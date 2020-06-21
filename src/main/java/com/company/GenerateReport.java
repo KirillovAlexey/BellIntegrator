@@ -2,29 +2,22 @@ package com.company;
 
 import com.readData.ReadFile;
 import com.readData.XmlParse;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 class GenerateReport {
-    private ReadFile readFile;
-    private XmlParse xmlParse;
+    private final ReadFile readFile;
     private OutputStreamWriter outputStreamWriter;
     private int countRow = 0;//счетчик строк
     private final int lNum;//длина Номера
     private final int lDate;//длина Даты
     private final int lFio;//длина ФИО
 
-    String tempNum;
-    String tempData;
-    String tempFio;
-
-    int pageWidth;
-    int pageHeight;
+    private final int pageHeight;
+    private final int pageWidth;
 
     private static final String PATH = "src\\main\\resources\\";
     private static final String SEPARATOR_COLUMN = "|";
@@ -33,18 +26,17 @@ class GenerateReport {
     private final StringBuilder dates = new StringBuilder("Дата");
     private final StringBuilder fio = new StringBuilder("ФИО");
 
-    public GenerateReport(ReadFile read) throws IOException, SAXException, ParserConfigurationException {
+    public GenerateReport(XmlParse xml, ReadFile read) {
         this.readFile = read;
-        //xmlParse = new XmlParse();
-        pageWidth = Integer.parseInt(xmlParse.getPage().getWidth());
-        pageHeight = Integer.parseInt(xmlParse.getPage().getHeight());
-        lNum = Integer.parseInt(xmlParse.getColumn().getColumns().get("Номер"));
-        lDate = Integer.parseInt(xmlParse.getColumn().getColumns().get("Дата"));
-        lFio = Integer.parseInt(xmlParse.getColumn().getColumns().get("ФИО"));
+        pageWidth = Integer.parseInt(xml.getPage().getWidth());
+        pageHeight = Integer.parseInt(xml.getPage().getHeight());
+        lNum = Integer.parseInt(xml.getColumn().getColumns().get("Номер"));
+        lDate = Integer.parseInt(xml.getColumn().getColumns().get("Дата"));
+        lFio = Integer.parseInt(xml.getColumn().getColumns().get("ФИО"));
 
-        number.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("Номер")));
-        dates.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("Дата")));
-        fio.setLength(Integer.parseInt(xmlParse.getColumn().getColumns().get("ФИО")));
+        number.setLength(Integer.parseInt(xml.getColumn().getColumns().get("Номер")));
+        dates.setLength(Integer.parseInt(xml.getColumn().getColumns().get("Дата")));
+        fio.setLength(Integer.parseInt(xml.getColumn().getColumns().get("ФИО")));
     }
 
 
@@ -69,6 +61,7 @@ class GenerateReport {
             // Запись строки в буффер, пока не закончится входная строка.
             do {
                 //Отрезание строки "Номер", запись в буфер
+                String tempNum;
                 if (str[0].length() > lNum) {
                     tempNum = str[0].substring(0, lNum);
                     tempNum = String.format(" %-" + lNum + "s ", tempNum);
@@ -80,6 +73,7 @@ class GenerateReport {
                     str[0] = "";
                 }
                 //Отрезание строки "Дата", запись в буфер
+                String tempData;
                 if (str[1].length() > lDate) {
                     tempData = str[1].substring(0, lDate);
                     tempData = String.format(" %-" + lDate + "s ", tempData);
@@ -92,13 +86,14 @@ class GenerateReport {
 
                 }
                 //Отрезание строки "ФИО", запись в буфер
+                String tempFio;
                 if (str[2].length() > lFio) {
                     str[2] = str[2].trim();
                     tempFio = str[2].substring(0, lFio);
                     tempFio = String.format(" %-" + lFio + "s ", tempFio);
                     str[2] = str[2].substring(lFio);
                     outputStreamWriter.write(SEPARATOR_COLUMN + tempFio + SEPARATOR_COLUMN);
-                } else if (str[2].length() <= lFio) {
+                } else {
                     tempFio = String.format(" %-" + lFio + "s ", str[2]);
                     outputStreamWriter.write(SEPARATOR_COLUMN + tempFio + SEPARATOR_COLUMN);
                     str[2] = "";
@@ -124,7 +119,7 @@ class GenerateReport {
                 outputStreamWriter.flush();
             }
 
-            outputStreamWriter.write(new String(new char[Integer.parseInt(xmlParse.getPage().getWidth())])
+            outputStreamWriter.write(new String(new char[pageWidth])
                     .replace("\0", SEPARATOR_LINE) + "\n");
             countRow++;
             outputStreamWriter.flush();
@@ -143,14 +138,14 @@ class GenerateReport {
         outputStreamWriter.write(" " + date + " " + SEPARATOR_COLUMN);
         outputStreamWriter.write(" " + fio + " " + SEPARATOR_COLUMN + "\n");
         countRow++;
-        outputStreamWriter.write(new String(new char[Integer.parseInt(xmlParse.getPage().getWidth())])
+        outputStreamWriter.write(new String(new char[pageWidth])
                 .replace("\0", SEPARATOR_LINE) + "\n");
         countRow++;
         outputStreamWriter.flush();
     }
 
     //Подвал
-    public void footer() throws IOException {
+    private void footer() throws IOException {
         outputStreamWriter.write("\n\nДля Запуска использовать следующую команду:\njava -cp target\\classes com.company.Main settings.xml source-data.tsv report.tsv");
         outputStreamWriter.flush();
     }

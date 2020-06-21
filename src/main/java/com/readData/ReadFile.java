@@ -1,8 +1,5 @@
 package com.readData;
 
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
