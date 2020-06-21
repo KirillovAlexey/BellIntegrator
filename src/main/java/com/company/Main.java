@@ -11,10 +11,10 @@ class Main {
 
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         //new XmlParse(args[0]);//читаем файл с настройками таблицы
-        new XmlParse(args[0]);
+        XmlParse xmlParse = new XmlParse(args[0]);
         ReadFile readFile = new ReadFile(args[1]);//читаем файл с исходными данными
         //readFile.read(args[1]);
-        GenerateReport generateReport = new GenerateReport(readFile);
+        GenerateReport generateReport = new GenerateReport(xmlParse,readFile);
         generateReport.generate(args[2]);
         //generateReport.generate(args[2]);
     }
